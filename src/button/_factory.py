@@ -232,11 +232,11 @@ class ArduinoConfigFactory:
                 notification_of_action.append(notifications.get(notification))
 
         if action.action_type == 1:
-            # Get master pin
-            master_pin = output_pins.get(action.master_id, None)
-            if master_pin is None:
-                logger.warning(f'The master pin {action.master_id} could not be found for action {action.id}')
-            return domain.ToggleAction(trigger, action.delay, pins_of_action, notification_of_action, master_pin,
+            # Get main pin
+            main_pin = output_pins.get(action.main_id, None)
+            if main_pin is None:
+                logger.warning(f'The main pin {action.main_id} could not be found for action {action.id}')
+            return domain.ToggleAction(trigger, action.delay, pins_of_action, notification_of_action, main_pin,
                                        condition, action.click_number)
         if action.action_type == 2:
             return domain.OnAction(trigger, action.delay, action.timer, pins_of_action, notification_of_action,
@@ -248,28 +248,28 @@ class ArduinoConfigFactory:
             return domain.OnDimmerAction(trigger, action.delay, action.timer, pins_of_action, notification_of_action,
                                          condition, action.click_number, action.dimmer_speed,
                                          action.dimmer_light_value, action.cancel_on_button_release,
-                                         action.master_dimmer_id)
+                                         action.main_dimmer_id)
         if action.action_type == 6:
             return domain.OffDimmerAction(trigger, action.delay, action.timer, pins_of_action, notification_of_action,
                                           condition, action.click_number, action.dimmer_speed,
                                           action.cancel_on_button_release)
         if action.action_type == 7:
-            # Get master pin
-            master_pin = output_pins.get(action.master_id, None)
-            if master_pin is None:
-                logger.warning(f'The master pin {action.master_id} could not be found for action {action.id}')
-            if action.master_dimmer_id is None and (action.dimmer_light_value is None or action.dimmer_light_value < 1):
-                logger.error(f'The master dimmer pin id was not set and no dimmer_light_value was set'
+            # Get main pin
+            main_pin = output_pins.get(action.main_id, None)
+            if main_pin is None:
+                logger.warning(f'The main pin {action.main_id} could not be found for action {action.id}')
+            if action.main_dimmer_id is None and (action.dimmer_light_value is None or action.dimmer_light_value < 1):
+                logger.error(f'The main dimmer pin id was not set and no dimmer_light_value was set'
                              f' while creating a ToggleDimmerAction for action id {action.id}.')
             if action.dimmer_light_value is None:
                 logger.error(f'Dimmer light value is not set. Set between 0 - 100 or -1 to use last known value.')
             if action.dimmer_speed is None:
                 logger.error(f"Dimmer speed is not set for action '{action.id}''")
 
-            return domain.ToggleDimmerAction(trigger, action.delay, pins_of_action, notification_of_action, master_pin,
+            return domain.ToggleDimmerAction(trigger, action.delay, pins_of_action, notification_of_action, main_pin,
                                              condition, action.click_number, action.dimmer_speed,
                                              action.dimmer_light_value, action.cancel_on_button_release,
-                                             action.master_dimmer_id)
+                                             action.main_dimmer_id)
 
         # Other types not supported yet
         logger.error(f'Type {action.action_type} not supported yet')

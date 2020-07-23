@@ -572,17 +572,17 @@ class ToggleAction(Action):
                  delay: int,
                  output_pins: List[OutputPin],
                  notifications: List[Notification],
-                 master: OutputPin,
+                 main: OutputPin,
                  condition: Optional[Condition],
                  click_number: int):
         super(ToggleAction, self).__init__(trigger, ActionType.TOGGLE, delay, output_pins, notifications,
                                            condition, click_number)
-        self.master = master
+        self.main = main
 
-    def perform_action(self, pins_to_switch: Dict[str, List[IndividualAction]], master: bool):
-        # if master is on put all the lights of and visa versa
+    def perform_action(self, pins_to_switch: Dict[str, List[IndividualAction]], main: bool):
+        # if main is on put all the lights of and visa versa
         temp_pin_actions = {}
-        if master:
+        if main:
             for pin in self.output_pins:
                 if pin.parent not in temp_pin_actions:
                     pin_action = IndividualAction(self.delay, [], [])
@@ -620,10 +620,10 @@ class OnDimmerAction(DimmerAction):
                  dimmer_speed: int,
                  dimmer_light_value: int,
                  cancel_on_button_release: bool,
-                 master_dim_id: int):
+                 main_dim_id: int):
         self.__off_timer = off_timer
         self.__dimmer_light_value = dimmer_light_value
-        self.__master_dim_id = master_dim_id
+        self.__main_dim_id = main_dim_id
         super(OnDimmerAction, self).__init__(trigger, ActionType.ON_DIMMER, delay, output_pins, notifications,
                                              condition, click_number, dimmer_speed, cancel_on_button_release)
 
@@ -705,40 +705,40 @@ class ToggleDimmerAction(DimmerAction):
                  delay: int,
                  output_pins: List[OutputPin],
                  notifications: List[Notification],
-                 master: OutputPin,
+                 main: OutputPin,
                  condition: Optional[Condition],
                  click_number: int,
                  dimmer_speed: int,
                  dimmer_light_value: int,
                  cancel_on_button_release: bool,
-                 master_dim_id: Optional[int]):
+                 main_dim_id: Optional[int]):
         super(ToggleDimmerAction, self).__init__(trigger, ActionType.TOGGLE_DIMMER, delay, output_pins, notifications,
                                                  condition, click_number, dimmer_speed, cancel_on_button_release)
-        self.master = master
+        self.main = main
         self.__dimmer_light_value = dimmer_light_value
-        self.__master_dim_id = master_dim_id
+        self.__main_dim_id = main_dim_id
 
     @property
-    def master_dim_id(self) -> Optional[int]:
-        return self.__master_dim_id
+    def main_dim_id(self) -> Optional[int]:
+        return self.__main_dim_id
 
     def perform_action(self,
                        pin_to_dim: Dict[str, List[IndividualDimAction]],
                        last_light_values_to_update: Dict[int, int],
-                       master_state: int,
-                       master_direction: str,
+                       main_state: int,
+                       main_direction: str,
                        last_light_value: int):
         temp_pin_actions = {}
-        # If master is off, start turning all lights on, regardless of button pressed or button longdown
+        # If main is off, start turning all lights on, regardless of button pressed or button longdown
         # If cancel_on_button_release is set to true and last dim direction was down, we start dimming up
-        # If master_state is 100, start turning all lights off
+        # If main_state is 100, start turning all lights off
 
-        logger.debug(f"{master_state}, {self.cancel_on_button_release}, {master_direction}")
+        logger.debug(f"{main_state}, {self.cancel_on_button_release}, {main_direction}")
 
-        if master_state == 0 or \
+        if main_state == 0 or \
                 (self.cancel_on_button_release and
-                 master_direction == constants.dim_direction_down and
-                 master_state != 100):
+                 main_direction == constants.dim_direction_down and
+                 main_state != 100):
             # If __dimmer_light_value is configured, use that value. Otherwise use the last known value
             light_value_to_set = self.__dimmer_light_value
             if light_value_to_set == -1:
@@ -758,10 +758,10 @@ class ToggleDimmerAction(DimmerAction):
             for key in temp_pin_actions:
                 if temp_pin_actions[key].has_values():
                     pin_to_dim.setdefault(key, []).append(temp_pin_actions[key])
-        # If master is on and cancel_on_button_release is false or last dim direction was up, we start dimming down
+        # If main is on and cancel_on_button_release is false or last dim direction was up, we start dimming down
         else:
             if not self.cancel_on_button_release:
-                last_light_values_to_update.setdefault(self.master_dim_id, master_state)
+                last_light_values_to_update.setdefault(self.main_dim_id, main_state)
 
             for pin in self.output_pins:
                 if pin.parent not in temp_pin_actions:

@@ -54,10 +54,10 @@ class DimmerActionProcessor:
         dimming_action = domain.DimmingAction(name, timer_between_messages)
         for pin in pins_to_switch:
             # For each pin, calculate the values that need to be sent to the arduino for each message
-            master_json = self.__status_service.get_arduino_dim_pin_status(name, pin)
+            main_json = self.__status_service.get_arduino_dim_pin_status(name, pin)
             # JSON contains 'state' and 'direction'
-            master = util.deserialize_json(master_json)
-            state = util.get_int_from_json_object(master, 'state')
+            main = util.deserialize_json(main_json)
+            state = util.get_int_from_json_object(main, 'state')
 
             # calculate in how many message the light will go from 100 to 0.
             # f.e. with a speed of 1sec (1000 msec) we have 5 parts

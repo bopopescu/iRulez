@@ -64,23 +64,23 @@ class ActionExecutor:
             elif isinstance(action, domain.OffAction):
                 action.perform_action(pins_to_switch)
             elif isinstance(action, domain.ToggleAction):
-                master = self.__status_service.get_arduino_pin_status(action.master.parent, action.master.number)
-                action.perform_action(pins_to_switch, master)
+                main = self.__status_service.get_arduino_pin_status(action.main.parent, action.main.number)
+                action.perform_action(pins_to_switch, main)
             elif isinstance(action, domain.OnDimmerAction):
                 action.perform_action(pins_to_dim)
             elif isinstance(action, domain.OffDimmerAction):
                 action.perform_action(pins_to_dim)
             elif isinstance(action, domain.ToggleDimmerAction):
-                master_json = self.__status_service.get_arduino_dim_pin_status(action.master.parent,
-                                                                               action.master.number)
+                main_json = self.__status_service.get_arduino_dim_pin_status(action.main.parent,
+                                                                               action.main.number)
                 # JSON contains 'state' and 'direction'
-                master = util.deserialize_json(master_json)
-                state = util.get_int_from_json_object(master, 'state')
-                direction = util.get_str_from_json_object(master, 'direction')
+                main = util.deserialize_json(main_json)
+                state = util.get_int_from_json_object(main, 'state')
+                direction = util.get_str_from_json_object(main, 'direction')
                 last_light_value_optional = None
-                if action.master_dim_id is not None:
-                    last_light_value_optional = self.__status_service.get_dimmer_light_value(action.master.parent,
-                                                                                             action.master_dim_id)
+                if action.main_dim_id is not None:
+                    last_light_value_optional = self.__status_service.get_dimmer_light_value(action.main.parent,
+                                                                                             action.main_dim_id)
                 last_light_value = 100
                 if last_light_value_optional is not None:
                     last_light_value = last_light_value_optional

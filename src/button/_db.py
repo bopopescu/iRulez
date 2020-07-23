@@ -98,9 +98,9 @@ class DummyDb(DbBase):
         # Create 3 actions for arduino 'DEMO".
         # Action 0 execute immediately, pins 0 and 10 ON, condition 4 for 15sec
         # Action 1 execute immediately, pins 2 and 9 OFF
-        # Action 2 execute immediately, pins 8,9,10 TOGGLE, master 8, after 30 sec
-        # Action 3 execute long down 5 sec, pins 8,9,10 TOGGLE, master 8, with mail notification
-        # Action 4 execute after release, pins 11, 12, 13 TOGGLE, master 8, with mail notification
+        # Action 2 execute immediately, pins 8,9,10 TOGGLE, main 8, after 30 sec
+        # Action 3 execute long down 5 sec, pins 8,9,10 TOGGLE, main 8, with mail notification
+        # Action 4 execute after release, pins 11, 12, 13 TOGGLE, main 8, with mail notification
         return [db_domain.Action(0, 2, 0, [0, 1], 0, 15, [0, 10], 4, None, 1, None, None, None, None),
                 db_domain.Action(1, 3, 0, [], 0, 0, [2, 9], None, None, 1, None, None, None, None),
                 db_domain.Action(2, 1, 0, [0, 1], 30, 0, [8, 9, 10], None, 8, 1, None, None, None, None),
@@ -245,10 +245,10 @@ class MariaDB(DbBase):
         with closing(self.__create_connection()) as conn:
             with closing(conn.cursor(buffered=True)) as cursor:
                 cursor.execute(
-                    "SELECT id, action_type, trigger_id, delay, timer, condition_id, master_id, dim_master_id, "
+                    "SELECT id, action_type, trigger_id, delay, timer, condition_id, main_id, dim_main_id, "
                     "click_number, dimmer_speed, dimmer_light_value, cancel_on_button_release FROM tbl_Action")
                 actions = []
-                for id, action_type, trigger_id, delay, timer, condition_id, master_id, dim_master_id, click_number, \
+                for id, action_type, trigger_id, delay, timer, condition_id, main_id, dim_main_id, click_number, \
                         dimmer_speed, dimmer_light_value, cancel_on_button_release in cursor:
                     with closing(conn.cursor(buffered=True)) as action_cursor:
                         action_cursor.execute("SELECT OutputPin_ID FROM tbl_Action_OutputPin WHERE Action_ID=%s", (id,))
@@ -263,8 +263,8 @@ class MariaDB(DbBase):
                             notification_ids.append(notification_id[0])
                     actions.append(
                         db_domain.Action(id, action_type, trigger_id, notification_ids, delay, timer, output_pin_ids,
-                                         condition_id, master_id, click_number, dimmer_speed, cancel_on_button_release,
-                                         dimmer_light_value, dim_master_id))
+                                         condition_id, main_id, click_number, dimmer_speed, cancel_on_button_release,
+                                         dimmer_light_value, dim_main_id))
                 return actions
 
     def __create_connection(self) -> None:

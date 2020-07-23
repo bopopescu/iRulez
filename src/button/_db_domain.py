@@ -59,12 +59,12 @@ class Action:
                  timer: int,
                  output_pin_ids: List[int],
                  condition_id: Optional[int],
-                 master_id: Optional[int],
+                 main_id: Optional[int],
                  click_number: int,
                  dimmer_speed: Optional[int],
                  cancel_on_button_release: Optional[bool],
                  dimmer_light_value: Optional[int],
-                 master_dimmer_id: Optional[int]):
+                 main_dimmer_id: Optional[int]):
         """
         Creates a new Action
 
@@ -76,7 +76,7 @@ class Action:
         :param timer: The timer after which the action should be reverted. Only applies for ON/OFF actions
         :param output_pin_ids: The identifiers of the output pins affected by this action.
         :param condition_id: The (optional) identifier of the condition that should apply for this action.
-        :param master_id: The master pin that should determine the TOGGLE action. This pin will be looked at when
+        :param main_id: The main pin that should determine the TOGGLE action. This pin will be looked at when
                             determining whether it should toggle on or off
         :param click_number: Number of times that has to be clicked on multiclick action to activate
         :param dimmer_speed: How fast/slow the dimmer has to change light intensity
@@ -84,7 +84,7 @@ class Action:
                                             as the button is released
         :param dimmer_light_value: If set to -1, a dimmer will remember its last known value before switching off
                                     If set to a value, a dimmer will go to this value by default/not remember last value
-        :param master_dimmer_id: The identifier of the dimmer whose last known value should be taken when switching
+        :param main_dimmer_id: The identifier of the dimmer whose last known value should be taken when switching
                                     the dimmer on.
         """
         # General properties
@@ -101,7 +101,7 @@ class Action:
         self.__timer = timer
 
         # TOGGLE/TOGGLE_DIMMER action
-        self.__master_id = master_id
+        self.__main_id = main_id
 
         # DIMMER
         self.__dimmer_speed = dimmer_speed
@@ -109,7 +109,7 @@ class Action:
 
         # ON_DIMMER/TOGGLE_DIMMER action
         self.__dimmer_light_value = dimmer_light_value
-        self.__master_dimmer_id = master_dimmer_id
+        self.__main_dimmer_id = main_dimmer_id
 
     @property
     def id(self) -> int:
@@ -144,8 +144,8 @@ class Action:
         return self.__condition_id
 
     @property
-    def master_id(self) -> Optional[int]:
-        return self.__master_id
+    def main_id(self) -> Optional[int]:
+        return self.__main_id
 
     @property
     def click_number(self) -> int:
@@ -164,8 +164,8 @@ class Action:
         return self.__dimmer_light_value
 
     @property
-    def master_dimmer_id(self) -> Optional[int]:
-        return self.__master_dimmer_id
+    def main_dimmer_id(self) -> Optional[int]:
+        return self.__main_dimmer_id
 
 
 class Trigger:

@@ -18,13 +18,13 @@ class Action(Base):
     trigger = db.relationship('Trigger', foreign_keys=[trigger_id])
     delay = db.Column(db.Integer)
     timer = db.Column(db.Integer)
-    master_id = db.Column(db.Integer, db.ForeignKey('tbl_OutputPin.id'))
-    master = db.relationship('Output', foreign_keys=[master_id])
+    main_id = db.Column(db.Integer, db.ForeignKey('tbl_OutputPin.id'))
+    main = db.relationship('Output', foreign_keys=[main_id])
     condition_id = db.Column(db.Integer, db.ForeignKey('tbl_Condition.id'))
     condition = db.relationship('Condition', foreign_keys=[condition_id])
     click_number = db.Column(db.Integer)
-    dim_master_id = db.Column(db.Integer, db.ForeignKey('tbl_OutputPin.id'))
-    dim_master = db.relationship('Output', foreign_keys=[dim_master_id])
+    dim_main_id = db.Column(db.Integer, db.ForeignKey('tbl_OutputPin.id'))
+    dim_main = db.relationship('Output', foreign_keys=[dim_main_id])
     dimmer_speed = db.Column(db.Integer)
     dimmer_light_value = db.Column(db.Integer)
     cancel_on_button_release = db.Column(db.Boolean)
@@ -50,9 +50,9 @@ class Action(Base):
             for notification in relais_action.notifications:
                 notification_id.append(notification.id)
                 notification_name.append(notification.name)
-            master_name = ''
-            if relais_action.master:
-                master_name = relais_action.master.name
+            main_name = ''
+            if relais_action.main:
+                main_name = relais_action.main.name
             condition_name = ''
             if relais_action.condition:
                 condition_name = relais_action.condition.name
@@ -60,7 +60,7 @@ class Action(Base):
                            'action_type_name': relais_action.type.name,
                           'action_type': relais_action.action_type, 'trigger': relais_action.trigger_id,
                            'trigger_name': relais_action.trigger.name, 'delay': relais_action.delay,
-                           'timer': relais_action.timer, 'master_id': relais_action.master_id, 'master': master_name,
+                           'timer': relais_action.timer, 'main_id': relais_action.main_id, 'main': main_name,
                            'condition_id': relais_action.condition_id, 'condition': condition_name,
                            'click_number': relais_action.click_number, 'outputs_id': output_pin_id,
                            'outputs': output_pin_name, 'notifications_id': notification_id,
@@ -71,8 +71,8 @@ class Action(Base):
     @staticmethod
     def new_action(request):
         data = request.get_json()
-        if data['master_id'] == '':
-            data['master_id'] = None
+        if data['main_id'] == '':
+            data['main_id'] = None
         if data['delay'] == '':
             data['delay'] = 0
         if data['timer'] == '':
@@ -81,7 +81,7 @@ class Action(Base):
             data['condition_id'] = None
 
         new_action = Action(name=data["name"], action_type=data['action_type'], trigger_id=data['trigger'],
-                            delay=data['delay'], timer=data['timer'], master_id=data['master_id'],
+                            delay=data['delay'], timer=data['timer'], main_id=data['main_id'],
                             condition_id=data['condition_id'], click_number=data['click_number'],
                             outputs=Output.get_outputs(data['outputs_id']),
                             notifications=Notification.get_notifications(data['notifications_id']))
@@ -109,10 +109,10 @@ class Action(Base):
             if data['timer'] == '':
                 data['timer'] = 0
             action.timer = data['timer']
-        if 'master_id' in data:
-            if data['master_id'] == '':
-                data['master_id'] = None
-            action.master_id = data['master_id']
+        if 'main_id' in data:
+            if data['main_id'] == '':
+                data['main_id'] = None
+            action.main_id = data['main_id']
         if 'condition_id' in data:
             if data['condition_id'] == '':
                 data['condition_id'] = None
@@ -157,9 +157,9 @@ class Action(Base):
             for notification in dimmer_action.notifications:
                 notification_id.append(notification.id)
                 notification_name.append(notification.name)
-            master_name = ''
-            if dimmer_action.dim_master:
-                master_name = dimmer_action.dim_master.name
+            main_name = ''
+            if dimmer_action.dim_main:
+                main_name = dimmer_action.dim_main.name
             condition_name = ''
             if dimmer_action.condition:
                 condition_name = dimmer_action.condition.name
@@ -167,7 +167,7 @@ class Action(Base):
                            'action_type_name': dimmer_action.type.name,
                            'action_type': dimmer_action.action_type, 'trigger': dimmer_action.trigger_id,
                            'trigger_name': dimmer_action.trigger.name, 'delay': dimmer_action.delay,
-                           'timer': dimmer_action.timer, 'master_id': dimmer_action.dim_master_id, 'master': master_name,
+                           'timer': dimmer_action.timer, 'main_id': dimmer_action.dim_main_id, 'main': main_name,
                            'condition_id': dimmer_action.condition_id, 'condition': condition_name,
                            'click_number': dimmer_action.click_number, 'outputs_id': output_pin_id,
                            'outputs': output_pin_name, 'notifications_id': notification_id,
